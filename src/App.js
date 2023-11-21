@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import Nav from "./Nav/Nav";
+import ContactList from "./ContactList/ContactList";
+import Contact from "./Contact/Contact";
 
 function App() {
   const [error, setError] = useState(null);
@@ -53,9 +56,20 @@ function App() {
     return <div>Error: {error.message}</div>;
   } else {
     return (
-      <div>
-        <div>
-          count: {pageInfo.count}; <br /> next: {pageInfo.next}; <br /> pages:{" "}
+      <div className="flex flex-col lg:flex-row h-screen">
+        <div className="flex-none h-[10%] lg:h-full w-full lg:w-[15%] border-solid border-b-[.1rem] lg:border-r-[.1rem] border-b-white lg:border-r-white">
+          <Nav />
+        </div>
+        <div className="flex h-[90%] lg:h-full w-full lg:w-[85%]">
+          <div className="w-[30%] border-solid border-r-[.1rem] border-r-white">
+            <ContactList />
+          </div>
+          <div className="w-[70%]">
+            <Contact />
+          </div>
+        </div>
+        {/* <div>
+          count: {pageInfo.count}; <br /> next: {pageInfo.next}; <br /> pages:
           {pageInfo.pages}; <br /> prev: {pageInfo.prev}
         </div>
         <ul>
@@ -65,7 +79,7 @@ function App() {
         </ul>
         <button className="btn btn-neutral" onClick={loadMore}>
           Load More
-        </button>
+        </button> */}
       </div>
     );
   }
