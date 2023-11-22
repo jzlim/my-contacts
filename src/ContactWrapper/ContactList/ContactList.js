@@ -44,11 +44,13 @@ function ContactList() {
     const fetchRequest = getDataFromApi(url);
     fetchRequest.then((result) => {
       if (result.results) {
-        if (isInitialFilter) {
-          setItems(result.results);
-        } else {
-          setItems([...items, ...result.results]);
-        }
+        setItems((prevItems) => {
+          if (isInitialFilter) {
+            return result.results;
+          } else {
+            return [...prevItems, ...result.results];
+          }
+        });
       } else {
         setItems([]);
       }
@@ -113,19 +115,17 @@ function ContactList() {
           clearFilter={() => updateFilter()}
         />
       </div>
-      <hr className="border-t-[.1rem] border-white border-solid" />
+      <div className="divider m-0"></div>
       <div className="flex flex-col items-center overflow-y-auto">
-        {items.map((item) => (
+        {items.map((item, index) => (
           <ContactListItem
-            key={item.id}
+            key={index}
             profilePic={item.image}
             name={item.name}
             species={item.species}
             contactListClick={() => handleContactClick(item.id)}
           />
         ))}
-        <hr className="border-t-[.1rem] border-solid" />
-        <span>{items.length}</span>
         {currentPage + 1 <= maxNumberOfPage && (
           <button className="link pb-4" onClick={loadMore}>
             Load More
