@@ -1,6 +1,6 @@
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { getDataFromApi } from "../../../Api";
-import dayjs from "dayjs";
 
 function Episode({ episodeUrls }) {
   const regex = /\/(\d+)$/;
@@ -25,7 +25,6 @@ function Episode({ episodeUrls }) {
         const match = url.match(regex);
         return match ? parseInt(match[1]) : null;
       });
-      console.log("episodeIds", episodeIds);
       fetchData(episodeIds.join(", "));
     }
   }, [episodeUrls]);
@@ -46,7 +45,7 @@ function Episode({ episodeUrls }) {
             </thead>
             <tbody>
               {episodes.map((episode) => (
-                <tr className="hover">
+                <tr className="hover" key={episode.id}>
                   <th>{episode.name}</th>
                   <td>{dayjs(episode.air_date).format("DD MMM YYYY")}</td>
                   <td>{episode.episode}</td>

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDebounce } from "use-debounce";
 
 function Filter({
   searchKeywordChange,
@@ -12,6 +13,7 @@ function Filter({
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState("DEFAULT");
   const [gender, setGender] = useState("DEFAULT");
+  const [debouncedValue] = useDebounce(keyword, 500);
 
   const handleStatusDropdown = (event) => {
     const value = event.target.value;
@@ -28,7 +30,6 @@ function Filter({
   const handleSearchKeywordInput = (event) => {
     const value = event.target.value;
     setKeyword(value);
-    searchKeywordChange(value);
   };
 
   const handleClearFilter = () => {
@@ -41,6 +42,10 @@ function Filter({
     setStatus("DEFAULT");
     setGender("DEFAULT");
   };
+
+  useEffect(() => {
+    searchKeywordChange(debouncedValue);
+  }, [debouncedValue]);
 
   return (
     <div className="flex flex-col gap-2">

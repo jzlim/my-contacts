@@ -1,8 +1,8 @@
-import PersonalInfo from "./PersonalInfo/PersonalInfo";
-import Episode from "./Episode/Episode";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getDataFromApi } from "../../Api";
-import { useEffect, useState } from "react";
+import Episode from "./Episode/Episode";
+import PersonalInfo from "./PersonalInfo/PersonalInfo";
 
 function Contact() {
   const { id } = useParams();
@@ -33,7 +33,6 @@ function Contact() {
       <div className="h-full overflow-y-auto">
         <div className="flex flex-row items-center p-4 lg:p-6 w-full gap-8">
           <div className="avatar indicator">
-            <span className="indicator-item indicator-top indicator-end badge badge-success"></span>
             <div className="w-28 lg:w-48 rounded-full">
               <img src={character.image} alt="profile pic" />
             </div>
