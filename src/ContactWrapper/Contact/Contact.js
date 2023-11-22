@@ -41,7 +41,7 @@ function Contact() {
             <span className="text-lg lg:text-4xl">{character.name}</span>
           </div>
         </div>
-        <hr className="border-t-[.1rem] border-solid" />
+        <div className="divider"></div>
         <div className="flex flex-col p-4 lg:p-6 gap-6 lg:gap-8">
           <PersonalInfo character={character} />
           <Episode episodeUrls={character.episode} />
