@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { getDataFromApi } from "../Api";
+import { useNavigate } from "react-router-dom";
+import { getDataFromApi } from "../../Api";
 import ContactListItem from "./ContactListItem/ContactListItem";
 import Filter from "./Filter/Filter";
 
-function ContactList({ contactClick }) {
+function ContactList() {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [maxNumberOfPage, setMaxNumberOfPage] = useState(1);
   const [items, setItems] = useState([]);
@@ -93,7 +95,7 @@ function ContactList({ contactClick }) {
   const resetCurrentPage = () => setCurrentPage(1);
 
   const handleContactClick = (id) => {
-    contactClick(id);
+    navigate(`/contact/${id}`);
   };
 
   useEffect(() => {
