@@ -38,7 +38,7 @@ function Filter({
   };
 
   const resetFilter = () => {
-    setKeyword("");
+    // setKeyword(""); // requirement asked to clear only `status` and `gender` values
     setStatus("DEFAULT");
     setGender("DEFAULT");
   };
@@ -83,24 +83,31 @@ function Filter({
             ))}
           </select>
         </div>
-        <div className="ml-auto tooltip" data-tip="Clear Filter">
-          <button className="btn btn-xs btn-circle" onClick={handleClearFilter}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+        {(keyword ||
+          (status && status !== "DEFAULT") ||
+          (gender && gender !== "DEFAULT")) && (
+          <div className="ml-auto tooltip" data-tip="Clear Filter">
+            <button
+              className="btn btn-xs btn-circle"
+              onClick={handleClearFilter}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

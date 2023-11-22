@@ -83,10 +83,10 @@ function ContactList() {
         resetCurrentPage();
         break;
       default:
-        setFilterName("");
+        // setFilterName(""); // requirement asked to clear only `status` and `gender` values
         setFilterGender("");
         setFilterStatus("");
-        fetchData(1, true);
+        fetchData(1, true, filterName);
         resetCurrentPage();
         break;
     }
