@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { useDebounce } from "use-debounce";
+import { useEffect, useRef, useState } from "react";
 
 function Filter({
   searchKeywordChange,
@@ -13,7 +12,8 @@ function Filter({
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState("DEFAULT");
   const [gender, setGender] = useState("DEFAULT");
-  const [debouncedValue] = useDebounce(keyword, 500);
+  const [debouncedInputValue, setDebouncedInputValue] = useState("");
+  const isInitialRender = useRef(true);
 
   const handleStatusDropdown = (event) => {
     const value = event.target.value;
@@ -44,8 +44,21 @@ function Filter({
   };
 
   useEffect(() => {
-    searchKeywordChange(debouncedValue);
-  }, [debouncedValue]);
+    // skip the debounce on the initial render
+    if (isInitialRender.current) {
+      isInitialRender.current = false;
+      return;
+    } else {
+      searchKeywordChange(debouncedInputValue);
+    }
+  }, [debouncedInputValue]);
+
+  useEffect(() => {
+    const delayInputTimeoutId = setTimeout(() => {
+      setDebouncedInputValue(keyword);
+    }, 500);
+    return () => clearTimeout(delayInputTimeoutId);
+  }, [keyword]);
 
   return (
     <div className="flex flex-col gap-2">
