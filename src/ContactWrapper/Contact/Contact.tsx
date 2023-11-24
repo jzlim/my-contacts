@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getDataFromApi } from "../../Shared/Api";
-import Loading from "../../Shared/Loading/Loading";
-import Episode from "./Episode/Episode";
+import { getDataFromApi } from "../../shared/Api/Api";
+import Loading from "../../shared/Loading/Loading";
+import { Character } from "../../types";
+import EpisodeList from "./Episode/EpisodeList";
 import PersonalInfo from "./PersonalInfo/PersonalInfo";
 
-function Contact() {
+const Contact = () => {
   const { id } = useParams();
-  const [character, setCharacter] = useState(null);
+  const [character, setCharacter] = useState<Character | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const fetchData = async () => {
     const url = `https://rickandmortyapi.com/api/character/${encodeURIComponent(
-      id
+      id as string
     )}`;
     try {
       setErrorMessage(() => "");
@@ -22,8 +23,8 @@ function Contact() {
       if (requestResult) {
         setCharacter(() => requestResult || null);
       }
-    } catch (error) {
-      setErrorMessage(() => error.message);
+    } catch (error: unknown) {
+      setErrorMessage(() => (error as Error).message);
       setCharacter(() => null);
     } finally {
       setIsLoading(() => false);
@@ -55,7 +56,7 @@ function Contact() {
           <div className="divider"></div>
           <div className="flex flex-col p-4 lg:p-6 gap-6 lg:gap-8">
             <PersonalInfo character={character} />
-            <Episode episodeUrls={character?.episode} />
+            <EpisodeList episodeUrls={character?.episode} />
           </div>
         </>
       ) : (
@@ -67,6 +68,6 @@ function Contact() {
       )}
     </div>
   );
-}
+};
 
 export default Contact;

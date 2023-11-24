@@ -1,6 +1,11 @@
 import dayjs from "dayjs";
+import { Character } from "../../../types";
 
-function PersonalInfo({ character }) {
+type Props = {
+  character: Character;
+};
+
+const PersonalInfo = ({ character }: Props) => {
   if (character) {
     return (
       <div>
@@ -50,6 +55,6 @@ function PersonalInfo({ character }) {
       </div>
     );
   }
-}
+};
 
 export default PersonalInfo;

@@ -1,15 +1,20 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { getDataFromApi } from "../../../Shared/Api";
-import Loading from "../../../Shared/Loading/Loading";
+import { getDataFromApi } from "../../../shared/Api/Api";
+import Loading from "../../../shared/Loading/Loading";
+import { Episode } from "../../../types";
 
-function Episode({ episodeUrls }) {
+type Props = {
+  episodeUrls: [string];
+};
+
+const EpisodeList = ({ episodeUrls }: Props) => {
   const regex = /\/(\d+)$/;
-  const [episodes, setEpisodes] = useState([]);
+  const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const fetchData = async (paramIds) => {
+  const fetchData = async (paramIds: string) => {
     const url = `https://rickandmortyapi.com/api/episode/[${encodeURIComponent(
       paramIds
     )}]`;
@@ -21,8 +26,8 @@ function Episode({ episodeUrls }) {
       if (requestResult) {
         setEpisodes(requestResult ?? []);
       }
-    } catch (error) {
-      setErrorMessage(() => error.message);
+    } catch (error: unknown) {
+      setErrorMessage(() => (error as Error).message);
       setEpisodes(() => []);
     } finally {
       setIsLoading(() => false);
@@ -84,6 +89,6 @@ function Episode({ episodeUrls }) {
       </div>
     );
   }
-}
+};
 
-export default Episode;
+export default EpisodeList;

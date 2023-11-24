@@ -1,36 +1,59 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getDataFromApi } from "../../Shared/Api";
-import Loading from "../../Shared/Loading/Loading";
+import { getDataFromApi } from "../../shared/Api/Api";
+import Loading from "../../shared/Loading/Loading";
 import ContactListItem from "./ContactListItem/ContactListItem";
 import Filter from "./Filter/Filter";
+import { Character } from "../../types";
 
-function ContactList() {
+type PageObject = {
+  currentPage: number;
+  nextPage: number | undefined;
+  maxPage: number | undefined;
+};
+
+type FilterObject = {
+  name: string | undefined;
+  gender: string | undefined;
+  status: string | undefined;
+};
+
+type Response = {
+  info: {
+    count: number;
+    pages: number;
+    next: string | null;
+    prev: string | null;
+  };
+  results: [Character];
+};
+
+const ContactList = () => {
   const navigate = useNavigate();
   const sentinelRef = useRef(null);
   const scrollContainerRef = useRef(null);
-  const [pageObj, setPageObj] = useState({
+  const [pageObj, setPageObj] = useState<PageObject>({
     currentPage: 0,
     nextPage: 1,
     maxPage: undefined,
   });
-  const [filterObject, setFilterObject] = useState({
+  const [filterObject, setFilterObject] = useState<FilterObject>({
     name: "",
     gender: "",
     status: "",
   });
   const [isFilter, setIsFilter] = useState(false);
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState<Character[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [intersectionHandled, setIntersectionHandled] = useState(false);
   const [isIntersected, setIsIntersected] = useState(false);
 
   const generateURLWithPayloads = (
-    page,
-    name = undefined,
-    gender = undefined,
-    status = undefined
+    page: number,
+    name: string | undefined = undefined,
+    gender: string | undefined = undefined,
+    status: string | undefined = undefined
   ) => {
     let url = "https://rickandmortyapi.com/api/character";
     url = `${url}?page=${encodeURIComponent(page)}`;
@@ -50,6 +73,9 @@ function ContactList() {
     if (!pageObj.nextPage && !resetPagination) {
       return;
     }
+    if (pageObj.nextPage === undefined) {
+      return;
+    }
     const url = generateURLWithPayloads(
       resetPagination ? 1 : pageObj.nextPage,
       filterObject.name,
@@ -59,7 +85,7 @@ function ContactList() {
     try {
       setErrorMessage(() => "");
       setIsLoading(() => true);
-      const requestResult = await getDataFromApi(url);
+      const requestResult: Response = await getDataFromApi(url);
       if (requestResult) {
         if (requestResult.results) {
           setItems((currentItems) => {
@@ -84,18 +110,21 @@ function ContactList() {
           });
         }
       }
-    } catch (error) {
-      setErrorMessage(() => error.message);
+    } catch (error: unknown) {
+      setErrorMessage(() => (error as Error).message);
       setItems([]);
     } finally {
       setIsLoading(() => false);
     }
   };
 
-  const applyFilter = (filterType, value) => {
+  const applyFilter = (
+    filterType?: "name" | "gender" | "status",
+    value?: string | undefined
+  ) => {
     // scroll to most top to prevent the Intersection triggered when it's only performing filtering action
     if (scrollContainerRef && scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = 0;
+      (scrollContainerRef.current as HTMLElement).scrollTop = 0;
     }
 
     setFilterObject((obj) => {
@@ -142,7 +171,9 @@ function ContactList() {
       { threshold: 1 }
     );
 
-    observer.observe(sentinelRef.current);
+    if (sentinelRef?.current) {
+      observer.observe(sentinelRef.current);
+    }
 
     return () => {
       if (sentinelRef.current) {
@@ -151,7 +182,9 @@ function ContactList() {
     };
   }, [intersectionHandled]);
 
-  const intersectionObserverHandler = (entries) => {
+  const intersectionObserverHandler = (
+    entries: IntersectionObserverEntry[]
+  ) => {
     const target = entries[0];
     if (target.isIntersecting) {
       if (!intersectionHandled) {
@@ -163,7 +196,7 @@ function ContactList() {
     }
   };
 
-  const handleContactClick = (id) => navigate(`/contact/${id}`);
+  const handleContactClick = (id: string) => navigate(`/contact/${id}`);
 
   return (
     <div className="flex flex-col h-full">
@@ -203,6 +236,6 @@ function ContactList() {
       </div>
     </div>
   );
-}
+};
 
 export default ContactList;

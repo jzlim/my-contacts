@@ -1,4 +1,4 @@
-const Loading = ({ asOverlay }) => {
+const Loading = ({ asOverlay = false }) => {
   return (
     <div
       className={`flex absolute justify-center items-center top-0 left-0 h-full w-full ${

@@ -1,11 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
-function Filter({
+type Props = {
+  searchKeywordChange: (value: string | undefined) => void;
+  statusChange: (value: string | undefined) => void;
+  genderChange: (value: string | undefined) => void;
+  clearFilter: () => void;
+};
+
+const Filter = ({
   searchKeywordChange,
   statusChange,
   genderChange,
   clearFilter,
-}) {
+}: Props) => {
   const statusList = ["alive", "dead", "unknown"];
   const genderList = ["female", "male", "genderless", "unknown"];
 
@@ -15,21 +22,21 @@ function Filter({
   const [debouncedInputValue, setDebouncedInputValue] = useState("");
   const isInitialRender = useRef(true);
 
-  const handleStatusDropdown = (event) => {
+  const handleStatusDropdown = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
-    setStatus(value);
+    setStatus(() => value);
     statusChange(value === "DEFAULT" ? undefined : value);
   };
 
-  const handleGenderDropdown = (event) => {
+  const handleGenderDropdown = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
-    setGender(value);
+    setGender(() => value);
     genderChange(value === "DEFAULT" ? undefined : value);
   };
 
-  const handleSearchKeywordInput = (event) => {
+  const handleSearchKeywordInput = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    setKeyword(value);
+    setKeyword(() => value);
   };
 
   const handleClearFilter = () => {
@@ -124,6 +131,6 @@ function Filter({
       </div>
     </div>
   );
-}
+};
 
 export default Filter;

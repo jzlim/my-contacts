@@ -1,4 +1,4 @@
-export const getDataFromApi = async (url) => {
+export const getDataFromApi = async (url: string) => {
   try {
     const response = await fetch(url);
     const result = await response.json();
@@ -11,10 +11,11 @@ export const getDataFromApi = async (url) => {
     if (result) {
       return result;
     }
-  } catch (error) {
-    if (typeof error === "object" && error?.error) {
-      throw error.error; // { error: string }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw error;
+    } else {
+      throw new Error("Something went wrong! Please try again.");
     }
-    throw error;
   }
 };

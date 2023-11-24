@@ -1,4 +1,16 @@
-function ContactListItem({ profilePic, name, species, contactListClick }) {
+type Props = {
+  profilePic: string;
+  name: string;
+  species: string;
+  contactListClick: () => void;
+};
+
+const ContactListItem = ({
+  profilePic,
+  name,
+  species,
+  contactListClick,
+}: Props) => {
   return (
     <>
       <div
@@ -18,6 +30,6 @@ function ContactListItem({ profilePic, name, species, contactListClick }) {
       <div className="divider m-0"></div>
     </>
   );
-}
+};
 
 export default ContactListItem;
