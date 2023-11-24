@@ -6,6 +6,7 @@ export const getDataFromApi = async (url) => {
     if (result) {
       return result;
     }
+    // Note: result has error property then it's invalid result
   } catch (error) {
     console.error("Error fetching data:", error);
     return null;

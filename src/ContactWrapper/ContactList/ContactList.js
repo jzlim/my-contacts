@@ -1,10 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getDataFromApi } from "../../Api";
+import { getDataFromApi } from "../../Shared/Api";
+import Loading from "../../Shared/Loading/Loading";
 import ContactListItem from "./ContactListItem/ContactListItem";
 import Filter from "./Filter/Filter";
 
 function ContactList() {
+  // TODO:
+  // 1. add loading state => contact list, single contact, episode table
+  // 2. verify the feasibility of using Typescript
+  // 3. verify all implementations and fix possible bad practice
+  // 4. consider separate single file to consolidate API requests
+  // 5. request error handling
+
   const navigate = useNavigate();
   const sentinelRef = useRef(null);
   const scrollContainerRef = useRef(null);
@@ -20,6 +28,7 @@ function ContactList() {
   });
   const [isFilter, setIsFilter] = useState(false);
   const [items, setItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [intersectionHandled, setIntersectionHandled] = useState(false);
   const [isIntersected, setIsIntersected] = useState(false);
 
@@ -53,30 +62,38 @@ function ContactList() {
       filterObject.gender,
       filterObject.status
     );
-    const requestResult = await getDataFromApi(url);
-    if (requestResult) {
-      if (requestResult.results) {
-        setItems((currentItems) => {
-          if (resetPagination) {
-            return [...requestResult.results];
-          }
-          return [...currentItems, ...requestResult.results];
-        });
-      } else {
-        setItems([]);
+    try {
+      setIsLoading(() => true);
+      const requestResult = await getDataFromApi(url);
+      if (requestResult) {
+        if (requestResult.results) {
+          setItems((currentItems) => {
+            if (resetPagination) {
+              return [...requestResult.results];
+            }
+            return [...currentItems, ...requestResult.results];
+          });
+        } else {
+          setItems([]);
+        }
+        if (requestResult.info) {
+          setPageObj((obj) => {
+            const info = requestResult.info;
+            const currentPage = obj.currentPage + 1;
+            const nextPage = currentPage + 1;
+            return {
+              currentPage,
+              nextPage: info.next != null ? nextPage : undefined,
+              maxPage: requestResult.info.pages,
+            };
+          });
+        }
       }
-      if (requestResult.info) {
-        setPageObj((obj) => {
-          const info = requestResult.info;
-          const currentPage = obj.currentPage + 1;
-          const nextPage = currentPage + 1;
-          return {
-            currentPage,
-            nextPage: info.next != null ? nextPage : undefined,
-            maxPage: requestResult.info.pages,
-          };
-        });
-      }
+    } catch (error) {
+      console.log("ContactList catchError", error);
+      // TODO: handle error
+    } finally {
+      setIsLoading(() => false);
     }
   };
 
@@ -169,15 +186,20 @@ function ContactList() {
         className="flex flex-col items-center overflow-y-auto"
         ref={scrollContainerRef}
       >
-        {items.map((item, index) => (
-          <ContactListItem
-            key={index}
-            profilePic={item.image}
-            name={item.name}
-            species={item.species}
-            contactListClick={() => handleContactClick(item.id)}
-          />
-        ))}
+        {isLoading && <Loading asOverlay={true} />}
+        {items && items.length ? (
+          items.map((item, index) => (
+            <ContactListItem
+              key={index}
+              profilePic={item.image}
+              name={item.name}
+              species={item.species}
+              contactListClick={() => handleContactClick(item.id)}
+            />
+          ))
+        ) : (
+          <span className="m-8 font-medium">No Contact Data</span>
+        )}
         <div ref={sentinelRef}></div>
         {/* Empty <span> block is necessary here, otherwise the sentinelRef observer won't be triggered. */}
         <span className="inline-block min-h-[.25rem] w-full"></span>
