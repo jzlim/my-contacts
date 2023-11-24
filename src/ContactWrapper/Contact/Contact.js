@@ -9,25 +9,22 @@ function Contact() {
   const { id } = useParams();
   const [character, setCharacter] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const fetchData = async () => {
     const url = `https://rickandmortyapi.com/api/character/${encodeURIComponent(
       id
     )}`;
     try {
+      setErrorMessage(() => "");
       setIsLoading(() => true);
       const requestResult = await getDataFromApi(url);
       if (requestResult) {
-        if (requestResult) {
-          setCharacter(() => requestResult);
-        } else {
-          setCharacter(() => null);
-        }
-        // TODO: if the character data is invalid, show alter page
+        setCharacter(() => requestResult || null);
       }
     } catch (error) {
-      console.log("Contact catchError", error);
-      // TODO: handle error
+      setErrorMessage(() => error.message);
+      setCharacter(() => null);
     } finally {
       setIsLoading(() => false);
     }
@@ -63,7 +60,9 @@ function Contact() {
         </>
       ) : (
         <div className="absolute flex h-full w-full justify-center items-center">
-          <span className="font-medium">No Character Found</span>
+          <span className="font-medium">
+            {errorMessage || "No Character Found"}
+          </span>
         </div>
       )}
     </div>

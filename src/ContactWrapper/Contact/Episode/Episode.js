@@ -7,6 +7,7 @@ function Episode({ episodeUrls }) {
   const regex = /\/(\d+)$/;
   const [episodes, setEpisodes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const fetchData = async (paramIds) => {
     const url = `https://rickandmortyapi.com/api/episode/[${encodeURIComponent(
@@ -14,15 +15,15 @@ function Episode({ episodeUrls }) {
     )}]`;
 
     try {
+      setErrorMessage(() => "");
       setIsLoading(() => true);
       const requestResult = await getDataFromApi(url);
       if (requestResult) {
         setEpisodes(requestResult ?? []);
       }
-      // TODO: if the character data is invalid, show alter page
     } catch (error) {
-      console.log("Episode catchError", error);
-      // TODO: handle error
+      setErrorMessage(() => error.message);
+      setEpisodes(() => []);
     } finally {
       setIsLoading(() => false);
     }
@@ -73,7 +74,7 @@ function Episode({ episodeUrls }) {
               ) : (
                 <tr>
                   <td className="text-center font-medium" colSpan={4}>
-                    No Episodes Data
+                    {errorMessage || "No Episodes Found"}
                   </td>
                 </tr>
               )}

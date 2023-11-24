@@ -6,13 +6,6 @@ import ContactListItem from "./ContactListItem/ContactListItem";
 import Filter from "./Filter/Filter";
 
 function ContactList() {
-  // TODO:
-  // 1. add loading state => contact list, single contact, episode table
-  // 2. verify the feasibility of using Typescript
-  // 3. verify all implementations and fix possible bad practice
-  // 4. consider separate single file to consolidate API requests
-  // 5. request error handling
-
   const navigate = useNavigate();
   const sentinelRef = useRef(null);
   const scrollContainerRef = useRef(null);
@@ -29,6 +22,7 @@ function ContactList() {
   const [isFilter, setIsFilter] = useState(false);
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [intersectionHandled, setIntersectionHandled] = useState(false);
   const [isIntersected, setIsIntersected] = useState(false);
 
@@ -63,6 +57,7 @@ function ContactList() {
       filterObject.status
     );
     try {
+      setErrorMessage(() => "");
       setIsLoading(() => true);
       const requestResult = await getDataFromApi(url);
       if (requestResult) {
@@ -90,8 +85,8 @@ function ContactList() {
         }
       }
     } catch (error) {
-      console.log("ContactList catchError", error);
-      // TODO: handle error
+      setErrorMessage(() => error.message);
+      setItems([]);
     } finally {
       setIsLoading(() => false);
     }
@@ -116,7 +111,7 @@ function ContactList() {
           newFilterObject.status = value;
           break;
         default:
-          newFilterObject.name = ""; // requirement asked to clear only `status` and `gender` values
+          // newFilterObject.name = ""; // requirement asked to clear only `status` and `gender` values
           newFilterObject.gender = "";
           newFilterObject.status = "";
           break;
@@ -187,7 +182,7 @@ function ContactList() {
         ref={scrollContainerRef}
       >
         {isLoading && <Loading asOverlay={true} />}
-        {items && items.length ? (
+        {items && items.length && !errorMessage ? (
           items.map((item, index) => (
             <ContactListItem
               key={index}
@@ -198,7 +193,9 @@ function ContactList() {
             />
           ))
         ) : (
-          <span className="m-8 font-medium">No Contact Data</span>
+          <span className="m-8 font-medium">
+            {errorMessage || "No Contact Data"}
+          </span>
         )}
         <div ref={sentinelRef}></div>
         {/* Empty <span> block is necessary here, otherwise the sentinelRef observer won't be triggered. */}
