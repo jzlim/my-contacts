@@ -4,8 +4,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import Contact from "./ContactWrapper/Contact/Contact";
 import ContactWrapper from "./ContactWrapper/ContactWrapper";
-import ErrorPage from "./ErrorPage";
 import "./index.css";
+import ErrorPage from "./Shared/ErrorPage/ErrorPage";
 
 const router = createBrowserRouter([
   {
