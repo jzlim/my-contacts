@@ -37,7 +37,7 @@ export const getCharacters = async (
   if (status) {
     url += `&status=${encodeURIComponent(status)}`;
   }
-  return await getDataFromApi(url);
+  return getDataFromApi(url);
 };
 
 export const getCharacterById = async (id: string) => {
@@ -45,7 +45,5 @@ export const getCharacterById = async (id: string) => {
 };
 
 export const getEpisodes = async (ids: string) => {
-  return await getDataFromApi(
-    `${baseUrl}/episode/[${encodeURIComponent(ids)}]`
-  );
+  return getDataFromApi(`${baseUrl}/episode/[${encodeURIComponent(ids)}]`);
 };
