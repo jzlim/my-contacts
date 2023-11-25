@@ -2,8 +2,6 @@ export const getDataFromApi = async (url: string) => {
   try {
     const response = await fetch(url);
     const result = await response.json();
-    console.log("API response ok", response.ok);
-    console.log("API result", result);
     if (!response.ok) {
       throw new Error(result.error);
     }
