@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getDataFromApi } from "../../shared/Api/Api";
+import { getCharacterById } from "../../shared/Api/Api";
 import Loading from "../../shared/Loading/Loading";
 import { Character } from "../../types";
 import EpisodeList from "./Episode/EpisodeList";
@@ -13,13 +13,10 @@ const Contact = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const fetchData = async () => {
-    const url = `https://rickandmortyapi.com/api/character/${encodeURIComponent(
-      id as string
-    )}`;
     try {
       setErrorMessage(() => "");
       setIsLoading(() => true);
-      const requestResult = await getDataFromApi(url);
+      const requestResult = await getCharacterById(id as string);
       if (requestResult) {
         setCharacter(() => requestResult || null);
       }

@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { getDataFromApi } from "../../../shared/Api/Api";
+import { getEpisodes } from "../../../shared/Api/Api";
 import Loading from "../../../shared/Loading/Loading";
 import { Episode } from "../../../types";
 
@@ -15,14 +15,10 @@ const EpisodeList = ({ episodeUrls }: Props) => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const fetchData = async (paramIds: string) => {
-    const url = `https://rickandmortyapi.com/api/episode/[${encodeURIComponent(
-      paramIds
-    )}]`;
-
     try {
       setErrorMessage(() => "");
       setIsLoading(() => true);
-      const requestResult = await getDataFromApi(url);
+      const requestResult = await getEpisodes(paramIds);
       if (requestResult) {
         setEpisodes(requestResult ?? []);
       }

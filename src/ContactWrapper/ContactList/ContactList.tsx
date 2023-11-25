@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getDataFromApi } from "../../shared/Api/Api";
+import { getCharacters } from "../../shared/Api/Api";
 import Loading from "../../shared/Loading/Loading";
+import { Character } from "../../types";
 import ContactListItem from "./ContactListItem/ContactListItem";
 import Filter from "./Filter/Filter";
-import { Character } from "../../types";
 
 type PageObject = {
   currentPage: number;
@@ -49,26 +49,6 @@ const ContactList = () => {
   const [intersectionHandled, setIntersectionHandled] = useState(false);
   const [isIntersected, setIsIntersected] = useState(false);
 
-  const generateURLWithPayloads = (
-    page: number,
-    name: string | undefined = undefined,
-    gender: string | undefined = undefined,
-    status: string | undefined = undefined
-  ) => {
-    let url = "https://rickandmortyapi.com/api/character";
-    url = `${url}?page=${encodeURIComponent(page)}`;
-    if (name) {
-      url += `&name=${encodeURIComponent(name)}`;
-    }
-    if (gender) {
-      url += `&gender=${encodeURIComponent(gender)}`;
-    }
-    if (status) {
-      url += `&status=${encodeURIComponent(status)}`;
-    }
-    return url;
-  };
-
   const fetchData = async (resetPagination = false) => {
     if (!pageObj.nextPage && !resetPagination) {
       return;
@@ -76,16 +56,15 @@ const ContactList = () => {
     if (pageObj.nextPage === undefined) {
       return;
     }
-    const url = generateURLWithPayloads(
-      resetPagination ? 1 : pageObj.nextPage,
-      filterObject.name,
-      filterObject.gender,
-      filterObject.status
-    );
     try {
       setErrorMessage(() => "");
       setIsLoading(() => true);
-      const requestResult: Response = await getDataFromApi(url);
+      const requestResult: Response = await getCharacters(
+        resetPagination ? 1 : pageObj.nextPage,
+        filterObject.name,
+        filterObject.gender,
+        filterObject.status
+      );
       if (requestResult) {
         if (requestResult.results) {
           setItems((currentItems) => {
